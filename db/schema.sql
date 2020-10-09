@@ -6,7 +6,7 @@ USE employeeManagementSystemDB;
 CREATE TABLE department (
 id INTEGER NOT NULL AUTO_INCREMENT,
 -- will hold deparment name
-department_name VARCHAR(30),
+department_name VARCHAR(30) NOT NULL,
 PRIMARY KEY(id)
 );
 
