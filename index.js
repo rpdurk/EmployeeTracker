@@ -74,7 +74,7 @@ const addDepartment = async () => {
       const result = await connection.query(
     `INSERT INTO department (department_name)
       VALUES ('${answers.department}');`) 
-      console.log(result);
+      console.log(`'The department ${answers.department} was added successfully'`);
     } catch (err) {
       console.log("catch");
       throw err
@@ -123,56 +123,56 @@ const addDepartment = async () => {
     };
 
 // *************************Add an Employee Logic******************************
-  // const addEmployee = async () => {
-  //   console.log('works');
-  //   let roles = await connection.query(
-  //   `SELECT title, roles.id FROM roles;`
-  //   );
-  //   roles = roles.map(row => {
-  //     const rolesActual = { name: row.title, value: row.id } 
-  //     return rolesActual;
-  //   });
-  //   let managers = await connection.query(
-  //     `SELECT employees.id, CONCAT (`first_Name`, ' ', `last_Name`) AS name FROM employees;`
-  //   );
-  //   managers = managers.map(row => {
-  //     const managerActual = { name: row.name, value: row.id }
-  //     return managerActual;
-  //   });
-  //   const { firstName, lastName, roles, managers } = await inquirer.prompt([
-  //     {
-  //       type: 'input',
-  //       name: 'firstName',
-  //       message: 'What is the employee\'s first name?'
-  //     },
-  //     {
-  //       type: 'input',
-  //       name: 'lastName',
-  //       message: 'What is the employee\'s last name?'
-  //     },
-  //     {
-  //       type: 'input',
-  //       name: 'role_id',
-  //       message: 'Which role does the new employee have?',
-  //       choices: rolesActual
-  //     },
-  //     {
-  //       type: 'input',
-  //       name: 'manager_id',
-  //       message: 'Who is the new employee\'s manager?',
-  //       choices: managersActual
-  //     }]);
-  //     try {
-  //       const result = await connection.query(
-  //     `INSERT INTO employees (firstName, lastName, role_id, manager_id)
-  //       VALUES ('${firstName}', '${lastName}', '${role_id}', '${manager}');`) 
-  //       console.log(firstName);
-  //     } catch (err) {
-  //       console.log("catch");
-  //       throw err
-  //     }
-  // start();
-  //   };
+  const addEmployee = async () => {
+    console.log('works');
+    let roles = await connection.query(
+    `SELECT title, roles.id FROM roles;`
+    );
+    roles = roles.map(row => {
+      const rolesActual = { name: row.title, value: row.id } 
+      return rolesActual;
+    });
+    let managers = await connection.query(
+      `SELECT employees.id, CONCAT (`firstName`, ' ', `lastName`) AS name FROM employees;`
+    );
+    managers = managers.map(row => {
+      const managerActual = { name: row.name, value: row.id }
+      return managerActual;
+    });
+    const { firstName, lastName, roles, managers } = await inquirer.prompt([
+      {
+        type: 'input',
+        name: 'firstName',
+        message: 'What is the employee\'s first name?'
+      },
+      {
+        type: 'input',
+        name: 'lastName',
+        message: 'What is the employee\'s last name?'
+      },
+      {
+        type: 'input',
+        name: 'role_id',
+        message: 'Which role does the new employee have?',
+        choices: roles
+      },
+      {
+        type: 'input',
+        name: 'manager_id',
+        message: 'Who is the new employee\'s manager?',
+        choices: managers
+      }]);
+      try {
+        const result = await connection.query(
+      `INSERT INTO employees (firstName, lastName, role_id, manager_id)
+        VALUES ('${firstName}', '${lastName}', '${role_id}', '${manager}');`) 
+        console.log(`'The employee ${answers.firstName} was added successfully'`);
+      } catch (err) {
+        console.log("catch");
+        throw err
+      }
+  start();
+    };
 
 
 // *************************View a Department Logic*****************************
@@ -225,7 +225,7 @@ const deleteDepartment = async () => {
     try {
       const result = await connection.query(
     `DELETE FROM department WHERE id=${answers.department};`)
-      console.log(`${answers.department} 'deleted'`);
+      console.log(`'${answers.department} was deleted'`);
     } catch (err) {
       console.log("catch");
       throw err
@@ -252,7 +252,7 @@ const deleteRole = async () => {
     try {
       const result = await connection.query(
     `DELETE FROM role WHERE id=${answers.role};`)
-      console.log(`${answers.role} 'deleted'`);
+      console.log(`'${answers.role} was deleted'`);
     } catch (err) {
       console.log("catch");
       throw err
