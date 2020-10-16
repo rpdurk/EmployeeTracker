@@ -48,6 +48,12 @@ const start = () => {
       case 'Delete a Department':
         deleteDepartment();
         break;
+      case 'Delete a Role':
+        deleteRole();
+        break;
+      case 'Exit menu':
+        exit();
+        break;
       default:
         break;
     }
@@ -73,6 +79,7 @@ const addDepartment = async () => {
       console.log("catch");
       throw err
     }
+    start();
   };
 
 // *************************Add a Role Logic******************************
@@ -157,6 +164,7 @@ const addDepartment = async () => {
   //       console.log("catch");
   //       throw err
   //     }
+  // start();
   //   };
 
 
@@ -168,6 +176,7 @@ const viewDepartment = async () => {
     ); 
       // console.log(result);
    console.table(result);
+   start();
   };
 
 // *************************View a Role Logic*****************************
@@ -178,6 +187,7 @@ const viewRole = async () => {
     ); 
       // console.log(result);
    console.table(result);
+   start();
   };
 
   // *************************View a Employee Logic*****************************
@@ -188,11 +198,11 @@ const viewEmployee = async () => {
     ); 
       // console.log(result);
    console.table(result);
+   start();
   };
 
 // *************************Delete a Department Logic*****************************
 const deleteDepartment = async () => {
-  // console.log('works');
   let departments = await connection.query(
     'SELECT id, department_name FROM department'
     );
@@ -200,7 +210,6 @@ const deleteDepartment = async () => {
       const currentDepartment = { name: row.department_name, value: row.id }
       return currentDepartment;
     });
-    // console.log(currentDepartment);
   const answers = await inquirer.prompt(
     {
     type: 'list',
@@ -208,7 +217,6 @@ const deleteDepartment = async () => {
     message: 'Which department do you want to delete?',
     choices: departments,
     })
-    // console.log(answers);
     try {
       const result = await connection.query(
     `DELETE FROM department WHERE id=${answers.department};`)
@@ -217,7 +225,38 @@ const deleteDepartment = async () => {
       console.log("catch");
       throw err
     }
+    start();
   };
 
+// *************************Delete a Role Logic*****************************
+const deleteRole = async () => {
+  let roles = await connection.query(
+    'SELECT id, title FROM role'
+    );
+    roles = roles.map(row => {
+      const currentRoles = { name: row.title, value: row.id }
+      return currentRoles;
+    });
+  const answers = await inquirer.prompt(
+    {
+    type: 'list',
+    name: 'role',
+    message: 'Which role do you want to delete?',
+    choices: roles,
+    })
+    try {
+      const result = await connection.query(
+    `DELETE FROM role WHERE id=${answers.role};`)
+      console.log(`${answers.role} 'deleted'`);
+    } catch (err) {
+      console.log("catch");
+      throw err
+    }
+    start();
+  };
+
+  const exit = () => {
+    connection.end();
+  };
 
 start();
