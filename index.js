@@ -84,7 +84,7 @@ const addDepartment = async () => {
 
 // *************************Add a Role Logic******************************
   const addRole = async () => {
-    const sqlDepartments = 'INSERT INTO roles SET ?;';
+    // const sqlDepartments = 'INSERT INTO roles SET ?;';
     let departments = await connection.query(
       'SELECT id, department_name FROM department'
       );
@@ -92,7 +92,7 @@ const addDepartment = async () => {
       const currentDepartment = { name: row.department_name, value: row.id }
       return currentDepartment;
     });
-    const answers = await inquirer.prompt(
+    const answers = await inquirer.prompt([
       {
         type: 'input',
         name: 'title',
@@ -108,17 +108,18 @@ const addDepartment = async () => {
         name: 'department',
         message: 'Which department does this role belong to?',
         choices: departments,
-      })
+      }]);
       console.log(answers);
       try {
         const result = await connection.query(
       `INSERT INTO role (title, salary, department_id)
         VALUES ('${answers.title}', '${answers.salary}', '${answers.department}');`) 
-        console.log(result);
+        console.log(`'The role ${answers.title} was added successfully'`);
       } catch (err) {
         console.log("catch");
         throw err
       }
+      start();
     };
 
 // *************************Add an Employee Logic******************************
