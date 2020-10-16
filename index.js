@@ -42,6 +42,12 @@ const start = () => {
       case 'View a Role':
         viewRole();
         break;
+      case 'View an Employee':
+        viewEmployee();
+        break;
+      case 'Delete a Department':
+        deleteDepartment();
+        break;
       default:
         break;
     }
@@ -89,7 +95,7 @@ const addDepartment = async () => {
   //       type: 'list',
   //       name: 'department',
   //       message: 'Which department does this role belong to?',
-  //       choice: 'Which department does this role belong to?',
+  //       choices: 'Which department does this role belong to?',
   //     })
   //     console.log(answers);
   //     try {
@@ -134,13 +140,13 @@ const addDepartment = async () => {
   //       type: 'input',
   //       name: 'role_id',
   //       message: 'Which role does the new employee have?',
-  //       choice: rolesActual
+  //       choices: rolesActual
   //     },
   //     {
   //       type: 'input',
   //       name: 'manager_id',
   //       message: 'Who is the new employee\'s manager?',
-  //       choice: managersActual
+  //       choices: managersActual
   //     }]);
   //     try {
   //       const result = await connection.query(
@@ -154,7 +160,7 @@ const addDepartment = async () => {
   //   };
 
 
- // *************************View a Department Logic*****************************
+// *************************View a Department Logic*****************************
 const viewDepartment = async () => {
   // console.log('works');
   const result = await connection.query(
@@ -164,7 +170,7 @@ const viewDepartment = async () => {
    console.table(result);
   };
 
-   // *************************View a Role Logic*****************************
+// *************************View a Role Logic*****************************
 const viewRole = async () => {
   // console.log('works');
   const result = await connection.query(
@@ -173,5 +179,45 @@ const viewRole = async () => {
       // console.log(result);
    console.table(result);
   };
+
+  // *************************View a Employee Logic*****************************
+const viewEmployee = async () => {
+  console.log('works');
+  const result = await connection.query(
+    'SELECT * FROM employee;'
+    ); 
+      // console.log(result);
+   console.table(result);
+  };
+
+// *************************Delete a Department Logic*****************************
+const deleteDepartment = async () => {
+  // console.log('works');
+  let departments = await connection.query(
+    'SELECT id, department_name FROM department'
+    );
+    departments = departments.map(row => {
+      const currentDepartment = { name: row.department_name, value: row.id }
+      return currentDepartment;
+    });
+    // console.log(currentDepartment);
+  const answers = await inquirer.prompt(
+    {
+    type: 'list',
+    name: 'department',
+    message: 'Which department do you want to delete?',
+    choices: departments,
+    })
+    // console.log(answers);
+    try {
+      const result = await connection.query(
+    `DELETE FROM department WHERE id=${answers.department};`)
+      console.log(`${answers.department} 'deleted'`);
+    } catch (err) {
+      console.log("catch");
+      throw err
+    }
+  };
+
 
 start();
