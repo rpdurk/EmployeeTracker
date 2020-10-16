@@ -30,12 +30,12 @@ const start = () => {
       case 'Add a Department':
         addDepartment();
         break;
-      // case 'Add a Role':
-      //   addRole();
-      //   break;
-      // case 'Add an Employee':
-      //   addEmployee();
-      //   break;
+      case 'Add a Role':
+        addRole();
+        break;
+      case 'Add an Employee':
+        addEmployee();
+        break;
       case 'View a Department':
         viewDepartment();
         break;
@@ -83,56 +83,62 @@ const addDepartment = async () => {
   };
 
 // *************************Add a Role Logic******************************
-  // const addRole = async () => {
-  //   const sqlDepartments = `Select * FROM department`
+  const addRole = async () => {
+    const sqlDepartments = 'INSERT INTO roles SET ?;';
+    let departments = await connection.query(
+      'SELECT id, department_name FROM department'
+      );
+    departments = departments.map(row => {
+      const currentDepartment = { name: row.department_name, value: row.id }
+      return currentDepartment;
+    });
+    const answers = await inquirer.prompt(
+      {
+        type: 'input',
+        name: 'title',
+        message: 'Please input the title of the role.'
+      },
+      {
+        type: 'input',
+        name: 'salary',
+        message: 'Please input the salary for this role.'
+      },
+      {
+        type: 'list',
+        name: 'department',
+        message: 'Which department does this role belong to?',
+        choices: departments,
+      })
+      console.log(answers);
+      try {
+        const result = await connection.query(
+      `INSERT INTO role (title, salary, department_id)
+        VALUES ('${answers.title}', '${answers.salary}', '${answers.department}');`) 
+        console.log(result);
+      } catch (err) {
+        console.log("catch");
+        throw err
+      }
+    };
 
-  //   console.log('works');
-  //   const answers = await inquirer.prompt(
-  //     {
-  //       type: 'input',
-  //       name: 'title',
-  //       message: 'Please input the title of the role.'
-  //     },
-  //     {
-  //       type: 'input',
-  //       name: 'salary',
-  //       message: 'Please input the salary for this role.'
-  //     },
-  //     {
-  //       type: 'list',
-  //       name: 'department',
-  //       message: 'Which department does this role belong to?',
-  //       choices: 'Which department does this role belong to?',
-  //     })
-  //     console.log(answers);
-  //     try {
-  //       const result = await connection.query(
-  //     `INSERT INTO role (department_name)
-  //       VALUES ('${answers.role}');`) 
-  //       console.log(result);
-  //     } catch (err) {
-  //       console.log("catch");
-  //       throw err
-  //     }
-  //   };
 // *************************Add an Employee Logic******************************
   // const addEmployee = async () => {
   //   console.log('works');
-  //   let sqlRoles = await connection.query(
-  //   `SELECT roles_id FROM roles;`
+  //   let roles = await connection.query(
+  //   `SELECT title, roles.id FROM roles;`
   //   );
-  //   sqlRoles = sqlRoles.map(row => {
-  //     const rolesActual = { name: row.name, value: row.id } 
+  //   roles = roles.map(row => {
+  //     const rolesActual = { name: row.title, value: row.id } 
   //     return rolesActual;
   //   });
-  //   let sqlManagers = await connection.query(
-  //     `SELECT employees.id, CONCAT (`firstName`, ' ', `lastName`) AS name FROM employees;`
+  //   let managers = await connection.query(
+  //     `SELECT employees.id, CONCAT (`first_Name`, ' ', `last_Name`) AS name FROM employees;`
   //   );
-  //   sqlManagers = sqlManagers.map(row => {
+  //   managers = managers.map(row => {
   //     const managerActual = { name: row.name, value: row.id }
   //     return managerActual;
   //   });
-  //   const { firstName, lastName, rolesActual, managerActual } = await inquirer.prompt([
+  //   const { firstName, lastName, roles, managers } = await inquirer.prompt([
   //     {
   //       type: 'input',
   //       name: 'firstName',
@@ -192,11 +198,9 @@ const viewRole = async () => {
 
   // *************************View a Employee Logic*****************************
 const viewEmployee = async () => {
-  console.log('works');
   const result = await connection.query(
     'SELECT * FROM employee;'
     ); 
-      // console.log(result);
    console.table(result);
    start();
   };
@@ -255,8 +259,8 @@ const deleteRole = async () => {
     start();
   };
 
-  const exit = () => {
-    connection.end();
-  };
+const exit = () => {
+  connection.end();
+};
 
 start();
