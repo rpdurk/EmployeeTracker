@@ -51,6 +51,9 @@ const start = () => {
       case 'Delete a Role':
         deleteRole();
         break;
+      case 'Update an Employee\'s Role':
+        updateEmployee();
+        break;
       case 'Exit menu':
         exit();
         break;
@@ -124,22 +127,20 @@ const addDepartment = async () => {
 
 // *************************Add an Employee Logic******************************
   const addEmployee = async () => {
-    console.log('works');
     let roles = await connection.query(
-    `SELECT title, roles.id FROM roles;`
+    `SELECT title, role.id FROM role;`
     );
     roles = roles.map(row => {
       const rolesActual = { name: row.title, value: row.id } 
       return rolesActual;
     });
     let managers = await connection.query(
-      `SELECT employees.id, CONCAT (`firstName`, ' ', `lastName`) AS name FROM employees;`
+      `SELECT employee.id, first_Name, last_Name FROM employee`
     );
-    managers = managers.map(row => {
-      const managerActual = { name: row.name, value: row.id }
-      return managerActual;
+    managers = managers.map(each => {
+      return `${each.id} ${each.first_Name} ${each.last_Name}`
     });
-    const { firstName, lastName, roles, managers } = await inquirer.prompt([
+    const answers = await inquirer.prompt([
       {
         type: 'input',
         name: 'firstName',
@@ -151,21 +152,22 @@ const addDepartment = async () => {
         message: 'What is the employee\'s last name?'
       },
       {
-        type: 'input',
+        type: 'list',
         name: 'role_id',
         message: 'Which role does the new employee have?',
         choices: roles
       },
       {
-        type: 'input',
+        type: 'list',
         name: 'manager_id',
         message: 'Who is the new employee\'s manager?',
         choices: managers
       }]);
       try {
+        const managerId = answers.manager_id[0].split(' ');
         const result = await connection.query(
-      `INSERT INTO employees (firstName, lastName, role_id, manager_id)
-        VALUES ('${firstName}', '${lastName}', '${role_id}', '${manager}');`) 
+      `INSERT INTO employee (first_Name, last_Name, role_id, manager_id)
+        VALUES ('${answers.firstName}', '${answers.lastName}', '${answers.role_id}', '${managerId[0]}');`) 
         console.log(`'The employee ${answers.firstName} was added successfully'`);
       } catch (err) {
         console.log("catch");
@@ -259,6 +261,50 @@ const deleteRole = async () => {
     }
     start();
   };
+
+  // ************************Update Employee by Role Logic******************************
+  const updateEmployee = async () => {
+    let roles = await connection.query(
+    `SELECT title, role.id FROM role;`
+    );
+    roles = roles.map(row => {
+      const rolesActual = { name: row.title, value: row.id } 
+      return rolesActual;
+    });
+
+    let employees = await connection.query(
+      `SELECT employee.id, first_Name, last_Name FROM employee`
+    );
+    employees = employees.map(each => {
+      return `${each.id} ${each.first_Name} ${each.last_Name}`
+    });
+    const answers = await inquirer.prompt([
+      {
+        type: 'list',
+        name: 'employeeChoice',
+        message: 'Which employee would you like to update?',
+        choices: employees
+      },
+      {
+        type: 'list',
+        name: 'newRole',
+        message: 'What role would you like to assign to this employee?',
+        choices: roles
+      }
+      ]);
+      try {
+        const employeeId = answers.employeeChoice[0].split(' ');
+        console.log(employeeId);
+        console.log(answers.newRole);
+        const result = await connection.query(
+      `UPDATE employee SET role_id = ${answers.newRole} WHERE id = ${employeeId[0]};`);
+        console.log(`'The employee ${answers.employeeChoice} was updated successfully'`);
+      } catch (err) {
+        console.log("catch");
+        throw err
+      }
+  start();
+    };
 
 const exit = () => {
   connection.end();
