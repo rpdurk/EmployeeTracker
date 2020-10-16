@@ -39,6 +39,9 @@ const start = () => {
       case 'View a Department':
         viewDepartment();
         break;
+      case 'View a Role':
+        viewRole();
+        break;
       default:
         break;
     }
@@ -153,11 +156,21 @@ const addDepartment = async () => {
 
  // *************************View a Department Logic*****************************
 const viewDepartment = async () => {
-  console.log('works');
+  // console.log('works');
   const result = await connection.query(
     'SELECT * FROM department;'
     ); 
-      console.log(result);
+      // console.log(result);
+   console.table(result);
+  };
+
+   // *************************View a Role Logic*****************************
+const viewRole = async () => {
+  // console.log('works');
+  const result = await connection.query(
+    'SELECT * FROM role;'
+    ); 
+      // console.log(result);
    console.table(result);
   };
 
