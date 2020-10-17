@@ -16,11 +16,11 @@ const start = () => {
           'View a Role',
           'View an Employee',
           'Update an Employee\'s Role',
-          'Update an Employee\'s Manager',
+          // 'Update an Employee\'s Manager',
           'Delete a Department',
           'Delete a Role',
           'Delete an Employee',
-          'View Department\'s salary budget',
+          // 'View Department\'s salary budget',
           'Exit menu'
         ]
     }
